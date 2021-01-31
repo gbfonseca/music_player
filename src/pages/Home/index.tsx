@@ -1,10 +1,18 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { View, TouchableOpacity, FlatList } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/Feather';
 import IconEntypo from 'react-native-vector-icons/Entypo';
+import { useMusic } from '../../hooks/music';
 import { Container, Header, Title, Button, ButtonText, RecentlyPlayed, SubTitle, MusicRecently, MostPlayed, MusicMostPlay, Gender, GenderItem, GenderText, Play, ImageMusic } from './styles';
+import { PlayingMusic } from '../../components';
 import CoverImage from '../../assets/cover.jpg';
+
+interface Music {
+  name: string;
+  artist: string;
+  id: number;
+}
 
 const musics = [
   {
@@ -14,8 +22,8 @@ const musics = [
   },
   {
     id: 2,
-    name: 'Mad love',
-    artist: 'Mabel'
+    name: 'Se eu largar o Freio',
+    artist: 'Péricles'
   },
   {
     id: 3,
@@ -59,7 +67,47 @@ const musics = [
   },
 ]
 
+const genders = [
+  {
+    id: 1,
+    name: 'Pagode'
+  },
+  {
+    id: 2,
+    name: 'Rock'
+  },
+  {
+    id: 3,
+    name: 'Pop'
+  },
+  {
+    id: 4,
+    name: 'MPB'
+  },
+  {
+    id: 5,
+    name: 'Jazz'
+  },
+  {
+    id: 6,
+    name: 'Funk'
+  },
+  {
+    id: 7,
+    name: 'Samba'
+  },
+]
+
 const Home: React.FC = () => {
+
+  const [selectMusic, setSelectMusic] = useState<Music>({} as Music);
+
+  const { handleSetMusic } = useMusic();
+
+  const handleSelectMusic = useCallback((music) => {
+    handleSetMusic(music);
+  }, []);
+
   return (
     <Container>
       <Header>
@@ -81,8 +129,8 @@ const Home: React.FC = () => {
           horizontal={true}
           keyExtractor={music => music.id.toString()}
           data={musics}
-          renderItem={() => (
-            <TouchableOpacity style={{  marginRight: 20}}>
+          renderItem={({item: music}) => (
+            <TouchableOpacity style={{  marginRight: 20}} onPress={() => handleSelectMusic(music)}>
               <MusicRecently>
                 <ImageMusic source={CoverImage} />
                 <Play>
@@ -99,8 +147,8 @@ const Home: React.FC = () => {
           horizontal={true}
           keyExtractor={music => music.id.toString()}
           data={musics}
-          renderItem={() => (
-            <TouchableOpacity style={{  marginRight: 20}}>
+          renderItem={({item: music}) => (
+            <TouchableOpacity style={{  marginRight: 20}} onPress={() => handleSelectMusic(music)}>
               <MusicMostPlay>
                 <ImageMusic source={CoverImage} />
                 <Play>
@@ -115,17 +163,18 @@ const Home: React.FC = () => {
         <SubTitle>Gênero</SubTitle>
         <FlatList
           horizontal={true}
-          keyExtractor={music => music.id.toString()}
-          data={musics}
-          renderItem={() => (
+          keyExtractor={gender => gender.id.toString()}
+          data={genders}
+          renderItem={({item: gender}) => (
             <TouchableOpacity style={{  marginRight: 20}}>
               <GenderItem>
-                <GenderText>POP</GenderText>
+                <GenderText>{gender.name}</GenderText>
               </GenderItem>
             </TouchableOpacity>
           )}
         />
       </Gender>
+      <PlayingMusic />
     </Container>
   );
 }

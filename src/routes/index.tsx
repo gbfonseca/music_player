@@ -3,12 +3,14 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import Home from '../pages/Home';
 import Music from '../pages/Musics';
+import { View } from 'react-native';
 
 const App = createBottomTabNavigator();
 
 const Routes: React.FC = () => {
   return (
-    <App.Navigator
+    <>
+      <App.Navigator
       initialRouteName="Home"
       tabBarOptions={{
       activeTintColor: '#44C68F',
@@ -31,6 +33,7 @@ const Routes: React.FC = () => {
         )
       }} />
     </App.Navigator>
+    </>
   );
 }
 

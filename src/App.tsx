@@ -3,8 +3,8 @@ import React from 'react';
 import AppLoading from 'expo-app-loading'
 import { StatusBar, View } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native';
+import { MusicProvider } from './hooks/music';
 import Routes from './routes';
-import * as Font from 'expo-font';
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold, Poppins_700Bold } from '@expo-google-fonts/poppins';
 
 
@@ -28,9 +28,11 @@ export const App: React.FC = () => {
   return (
     <NavigationContainer>
       <StatusBar barStyle="light-content" backgroundColor="#212121" />
-      <View style={{ flex: 1, backgroundColor: "#212121" }}>
-        <Routes />
-      </View>
+      <MusicProvider>
+        <View style={{ flex: 1, backgroundColor: "#212121" }}>
+          <Routes />
+        </View>
+      </MusicProvider>
     </NavigationContainer>
   );
 }
