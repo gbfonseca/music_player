@@ -5,6 +5,7 @@ import { StatusBar, View } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native';
 import { MusicProvider } from './hooks/music';
 import Routes from './routes';
+import Stacks from './routes/stacks';
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold, Poppins_700Bold } from '@expo-google-fonts/poppins';
 
 

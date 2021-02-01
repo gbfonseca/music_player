@@ -1,24 +1,27 @@
 import React, { useCallback, useState } from 'react';
-import { View, TouchableOpacity, FlatList } from 'react-native';
+import { View, TouchableOpacity, FlatList, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/Feather';
 import IconEntypo from 'react-native-vector-icons/Entypo';
 import { useMusic } from '../../hooks/music';
 import { Container, Header, Title, Button, ButtonText, RecentlyPlayed, SubTitle, MusicRecently, MostPlayed, MusicMostPlay, Gender, GenderItem, GenderText, Play, ImageMusic } from './styles';
 import { PlayingMusic } from '../../components';
+import { PlayIcon } from '../../assets/icons'
 import CoverImage from '../../assets/cover.jpg';
 
 interface Music {
   name: string;
   artist: string;
   id: number;
+  path?: string;
 }
 
 const musics = [
   {
     id: 1,
-    name: 'Mad love',
-    artist: 'Mabel'
+    name: 'Vida Real',
+    artist: 'Engenheiros do Hawaii',
+    path: '../assets/Vida_Real.mp3'
   },
   {
     id: 2,
@@ -134,7 +137,7 @@ const Home: React.FC = () => {
               <MusicRecently>
                 <ImageMusic source={CoverImage} />
                 <Play>
-                    <IconEntypo name="controller-play" size={21} />
+                    <Image source={PlayIcon} style={{ width: 12, height: 12 }} />
                 </Play>
               </MusicRecently>
             </TouchableOpacity>
@@ -152,7 +155,7 @@ const Home: React.FC = () => {
               <MusicMostPlay>
                 <ImageMusic source={CoverImage} />
                 <Play>
-                  <IconEntypo name="controller-play" size={21} />
+                  <Image source={PlayIcon} style={{ width: 12, height: 12 }} />
                 </Play>
               </MusicMostPlay>
             </TouchableOpacity>

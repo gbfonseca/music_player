@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import Home from '../pages/Home';
 import Music from '../pages/Musics';
 import { View } from 'react-native';
+import Stacks from './stacks';
 
 const App = createBottomTabNavigator();
 
@@ -31,6 +32,10 @@ const Routes: React.FC = () => {
         tabBarIcon: ({color}) => (
           <Icon name="star" size={24} color={color} style={{ marginTop: 10 }} />
         )
+      }} />
+      <App.Screen name="Playing" component={Stacks} options={{
+        tabBarVisible: false,
+        tabBarButton: () => null
       }} />
     </App.Navigator>
     </>
