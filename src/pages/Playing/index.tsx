@@ -5,7 +5,7 @@ import IconFeather from 'react-native-vector-icons/Feather';
 import IconFA from 'react-native-vector-icons/FontAwesome';
 import { useMusic } from '../../hooks/music'
 import Cover from '../../assets/cover.jpg';
-import { Ellipse } from '../../assets/icons'
+import { Ellipse, MusicPlaceholder } from '../../assets/icons'
 import { Container, Content, Header, Image, Title, SubTitle, Slider, Buttons, Play, Back } from './styles'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
@@ -32,9 +32,9 @@ const Playing: React.FC = () => {
               <IconFeather name="list" size={30} color="#FFF" />
             </TouchableOpacity>
           </Header>
-          <Image source={Cover} />
-          <Title>{music.name}</Title>
-          <SubTitle>{music.artist}</SubTitle>
+          <Image source={MusicPlaceholder} />
+          <Title>{music.filename.substring(0, 40)}</Title>
+          <SubTitle>Autor desconhecido</SubTitle>
           <Slider
             minimumTrackTintColor="#45739D"
             maximumTrackTintColor="#FFF"

@@ -19,7 +19,7 @@ export const Header = styled.View`
 
 export const Image = styled.Image`
   width: 90%;
-  height: 360px;
+  height: 300px;
   border-radius: 20px;
   margin-top: 30px;
   box-shadow: 0px 32px 13px rgba(0, 0, 0, 0.25);
@@ -30,7 +30,7 @@ export const Title = styled.Text`
   max-width: 290px;
   text-align: center;
   font-family: 'Poppins_600SemiBold';
-  font-size: 24px;
+  font-size: 20px;
   line-height: 36px;
   letter-spacing: 0.5px;
   color: #FFF;
@@ -40,7 +40,7 @@ export const SubTitle = styled.Text`
   max-width: 290px;
   text-align: center;
   font-family: 'Poppins_400Regular';
-  font-size: 18px;
+  font-size: 16px;
   line-height: 36px;
   letter-spacing: 0.5px;
   color: #FFF;

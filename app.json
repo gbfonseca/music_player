@@ -2,11 +2,15 @@
   "name": "music-player",
   "displayName": "music-player",
   "expo": {
-    "name": "music-player",
+    "name": "RN Music Player",
     "slug": "music-player",
     "version": "1.0.0",
     "assetBundlePatterns": [
       "**/*"
-    ]
+    ],
+    "splash": {
+      "image": "./android/app/src/main/res/drawable-xxxhdpi/icon.png",
+      "backgroundColor": "#000000"
+    }
   }
 }

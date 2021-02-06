@@ -8,9 +8,16 @@ import { useMusic } from '../../hooks/music';
 import { ActualMusic, MusicName, MusicInfo } from './styles';
 
 interface MusicProps {
-  name: string;
-  artist: string;
-  id: number;
+  albumId: string;
+  creationTime: number;
+  duration: number;
+  filename: string;
+  height: number;
+  id: string;
+  mediaType: string;
+  modificationTime: number;
+  uri: string;
+  width: number;
 }
 
 const PlayingMusic: React.FC = () => {
@@ -27,7 +34,7 @@ const PlayingMusic: React.FC = () => {
 
   return (
     <TouchableOpacity style={{  position: 'absolute', bottom: 0}} onPress={() => navigation.navigate('Playing')}>
-      {music.name && (
+      {music.filename && (
         <LinearGradient colors={['#45739d', '#44c68f']} style={{height: 50, flexDirection: 'row',  width: '100%',paddingHorizontal: 12, alignItems: 'center', justifyContent: 'space-between'}} >
           <ActualMusic>
             <TouchableOpacity onPress={handleStopMusic}>
@@ -35,11 +42,11 @@ const PlayingMusic: React.FC = () => {
               {musicStatus && <IconFA name="pause" size={24} color="#151515" />}
             </TouchableOpacity>
             <View style={{ marginLeft: 21 }}>
-              <MusicName>{music.name}</MusicName>
-              <MusicInfo>{music.artist}</MusicInfo>
+              <MusicName>{music.filename.substring(0, 65)}</MusicName>
+              <MusicInfo>Anyone</MusicInfo>
             </View>
           </ActualMusic>
-          <TouchableOpacity>
+          <TouchableOpacity style={{ marginRight: 20, flex: 1}}>
             <Icon name="stepforward" size={24} color="#151515" />
           </TouchableOpacity>
         </LinearGradient>

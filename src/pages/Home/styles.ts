@@ -92,16 +92,14 @@ export const GenderText = styled.Text`
   font-size: 18px;
 `;
 
-export const Play = styled.View`
+export const Play = styled.Image`
   position: absolute;
   box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.25);
-  background: #FFF;
   border-radius: 50px;
-  width: 33px;
-  height: 33px;
+  width: 45px;
+  height: 45px;
   bottom: 0;
   right: 0;
-  margin: 7px 5px;
   align-items: center;
   justify-content: center;
 `;

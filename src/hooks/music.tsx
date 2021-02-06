@@ -1,18 +1,29 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { Audio,  } from 'expo-av'
-
-interface MusicProps {
-  name: string;
-  artist: string;
-  id: number;
-  path?: string;
-}
+import { Audio } from 'expo-av'
+import * as MediaLibrary from 'expo-media-library';
+import * as Permissions from 'expo-permissions';
+import AsyncStorage from '@react-native-community/async-storage';
 
 interface MusicContextData {
   handleSetMusic(music: any): void;
   handleStopMusic(): Promise<void>;
+  handleFindMusic(): void;
   music: MusicProps;
   musicStatus: boolean;
+  musics: MusicProps[];
+}
+
+interface MusicProps {
+  albumId: string;
+  creationTime: number;
+  duration: number;
+  filename: string;
+  height: number;
+  id: string;
+  mediaType: string;
+  modificationTime: number;
+  uri: string;
+  width: number;
 }
 
 const MusicContext = createContext<MusicContextData>({} as MusicContextData);
@@ -30,8 +41,37 @@ function useMusic(): MusicContextData {
 const MusicProvider: React.FC = ({ children }) => {
 
   const [music, setMusic] = useState<MusicProps>({} as MusicProps);
+  const [musics, setMusics] = useState<MusicProps []>([]);
   const [sound, setSound] = useState(new Audio.Sound());
   const [musicStatus, setMusicStatus] = useState(false);
+
+  useEffect(() => {
+    const loadMediaLibrary = async () => {
+      const { status } = await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
+
+      if (status !== 'granted') {
+        console.log('Library not granted');
+        return;
+      }
+
+      const musics = await AsyncStorage.getItem('@RNMusicPlayer');
+
+      if (musics) {
+        await setMusics(JSON.parse(musics));
+        return;
+      }
+
+      const response = await MediaLibrary.getAssetsAsync({
+        mediaType: 'audio',
+        first: 10000
+      }).then((response: any) => {
+       return response.assets.filter((music: any) => !music.filename.startsWith('AUD-'))
+      })
+      await setMusics(response);
+      await AsyncStorage.setItem('@RNMusicPlayer', JSON.stringify(response));
+    }
+    loadMediaLibrary();
+  }, []);
 
   useEffect(() => {
 
@@ -43,7 +83,6 @@ const MusicProvider: React.FC = ({ children }) => {
         interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DUCK_OTHERS,
         shouldDuckAndroid: true,
         staysActiveInBackground: true,
-        playThroughEarpieceAndroid: true
       })
     } catch(err) {
       console.log(err)
@@ -56,14 +95,28 @@ const MusicProvider: React.FC = ({ children }) => {
       : setMusicStatus(false);
   }, [sound]);
 
+  const handleFindMusic = useCallback(async () => {
+    const response = await MediaLibrary.getAssetsAsync({
+      mediaType: 'audio',
+      first: 10000
+    }).then((response: any) => {
+     return response.assets.filter((music: any) => !music.filename.startsWith('AUD-'))
+    })
+    await setMusics(response);
+    await AsyncStorage.setItem('@RNMusicPlayer', JSON.stringify(response));
+    console.log('Gravando')
+  }, [])
+
   const handleSetMusic = useCallback(async (music) => {
     setMusic(music);
-    if(music.path) {
+    if(music) {
       if (sound._loaded) {
         await sound.unloadAsync();
       }
        await sound.loadAsync(
-        require('../assets/Vida_Real.mp3'),
+        {
+          uri: music.uri
+        },
         {
           shouldPlay: musicStatus,
         },
@@ -84,7 +137,7 @@ const MusicProvider: React.FC = ({ children }) => {
   }, []); 
 
   return (
-    <MusicContext.Provider value={{ handleSetMusic, music, handleStopMusic, musicStatus }}>
+    <MusicContext.Provider value={{ handleSetMusic, music, handleStopMusic, musicStatus, musics, handleFindMusic }}>
       {children}
     </MusicContext.Provider>
   );
