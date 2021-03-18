@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/AntDesign';
 import IconFeather from 'react-native-vector-icons/Feather';
@@ -6,15 +6,16 @@ import IconFA from 'react-native-vector-icons/FontAwesome';
 import { useMusic } from '../../hooks/music'
 import Cover from '../../assets/cover.jpg';
 import { Ellipse, MusicPlaceholder } from '../../assets/icons'
-import { Container, Content, Header, Image, Title, SubTitle, Slider, Buttons, Play, Back } from './styles'
+import { Container, Content, Header, Image, Title, SubTitle, Slider, Buttons, Play, Back, ViewMusicDuration, DurationView, DurationTime } from './styles'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
+import { millisToMinutesAndSeconds } from '../../utils/convert-millis';
 
 const Playing: React.FC = () => {
-
+  const [currentTime, setCurrentTime] = useState(0);
   const navigation = useNavigation();
 
-  const { music, handleStopMusic, musicStatus } = useMusic();
+  const { music, handleStopMusic, musicStatus, musicDuration } = useMusic();
 
   return (
     <Container>
@@ -35,12 +36,18 @@ const Playing: React.FC = () => {
           <Image source={MusicPlaceholder} />
           <Title>{music.filename.substring(0, 40)}</Title>
           <SubTitle>Autor desconhecido</SubTitle>
-          <Slider
-            minimumTrackTintColor="#45739D"
-            maximumTrackTintColor="#FFF"
-            thumbTintColor="#FFF"
-            thumbImage={Ellipse}
-          />
+          <ViewMusicDuration>
+            <Slider
+              minimumTrackTintColor="#45739D"
+              maximumTrackTintColor="#FFF"
+              thumbTintColor="#FFF"
+              thumbImage={Ellipse}
+            />
+            <DurationView>
+              <DurationTime>0:00</DurationTime>
+              <DurationTime>{millisToMinutesAndSeconds(musicDuration)}</DurationTime>
+            </DurationView>
+          </ViewMusicDuration>
           <Buttons>
             <TouchableOpacity>
               <Icon name="retweet" size={24} color="#FFF" />

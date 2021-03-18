@@ -61,7 +61,7 @@ const Home: React.FC = () => {
       <Header>
         <Title>Músicas</Title>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <LinearGradient colors={['#45739d', '#44c68f']} style={{height: 50, borderRadius: 100, paddingHorizontal: 12, alignItems: 'center', justifyContent: 'center'}} >
+            <LinearGradient colors={['#45739d', '#44c68f']} style={{height: 50, borderRadius: 25, paddingHorizontal: 12, alignItems: 'center', justifyContent: 'center'}} >
               <Button onPress={handleFindMusic}>
                 <ButtonText>Adicionar pasta</ButtonText>
               </Button>
@@ -94,7 +94,7 @@ const Home: React.FC = () => {
           keyExtractor={music => music.id.toString()}
           data={musics}
           renderItem={({item: music}) => (
-            <TouchableOpacity style={{  marginRight: 20}} onPress={() => handleSelectMusic(music)}>
+            <TouchableOpacity style={{ marginRight: 20}} onPress={() => handleSelectMusic(music)}>
               <MusicMostPlay>
                 <ImageMusic source={MusicPlaceholder} />
                 <Play source={PlayIcon} />

@@ -47,7 +47,27 @@ export const SubTitle = styled.Text`
 `;
 
 export const Slider = styled.Slider`
-  width: 95%;
+  width: 100%;
+`;
+
+export const ViewMusicDuration = styled.View`
+  width: 95%
+`;
+
+export const DurationView = styled.View`
+  width: 100%;
+  padding: 0 10px;
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
+export const DurationTime = styled.Text`
+  text-align: center;
+  font-family: 'Poppins_400Regular';
+  font-size: 12px;
+  line-height: 36px;
+  letter-spacing: 0.5px;
+  color: #FFF;
 `;
 
 export const Buttons = styled.View`

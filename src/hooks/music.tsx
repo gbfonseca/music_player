@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { Audio } from 'expo-av'
+import { Audio, AVPlaybackStatus } from 'expo-av'
 import * as MediaLibrary from 'expo-media-library';
 import * as Permissions from 'expo-permissions';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -11,6 +11,7 @@ interface MusicContextData {
   music: MusicProps;
   musicStatus: boolean;
   musics: MusicProps[];
+  musicDuration: any;
 }
 
 interface MusicProps {
@@ -24,6 +25,10 @@ interface MusicProps {
   modificationTime: number;
   uri: string;
   width: number;
+}
+
+interface SoundProps {
+  durationMillis: number
 }
 
 const MusicContext = createContext<MusicContextData>({} as MusicContextData);
@@ -44,7 +49,7 @@ const MusicProvider: React.FC = ({ children }) => {
   const [musics, setMusics] = useState<MusicProps []>([]);
   const [sound, setSound] = useState(new Audio.Sound());
   const [musicStatus, setMusicStatus] = useState(false);
-
+  const [musicDuration, setMusicDuration] = useState<number>();
   useEffect(() => {
     const loadMediaLibrary = async () => {
       const { status } = await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
@@ -113,31 +118,41 @@ const MusicProvider: React.FC = ({ children }) => {
       if (sound._loaded) {
         await sound.unloadAsync();
       }
-       await sound.loadAsync(
+      await sound.loadAsync(
         {
           uri: music.uri
         },
         {
           shouldPlay: musicStatus,
+          isLooping: false,
         },
         false
-      );
-      setMusicStatus(sound._loaded);
+       );
       await sound.stopAsync();
       await sound.playAsync();
       setSound(sound);
-
+      sound.getStatusAsync().then((response: any) => {
+        setMusicDuration(response.durationMillis as number)
+        setMusicStatus(response.isPlaying);
+      })
     }
   }, []);
 
   const handleStopMusic = useCallback(async () => {
-    sound._loaded ? await sound.pauseAsync() :  await sound.playAsync()
-  
+    musicStatus ? await sound.pauseAsync() :  await sound.playAsync()
     setMusicStatus(prevState => !prevState);
-  }, []); 
+  }, [musicStatus]); 
 
   return (
-    <MusicContext.Provider value={{ handleSetMusic, music, handleStopMusic, musicStatus, musics, handleFindMusic }}>
+    <MusicContext.Provider value={{ 
+      handleSetMusic,
+      music,
+      handleStopMusic,
+      musicStatus,
+      musics,
+      handleFindMusic,
+      musicDuration,
+    }}>
       {children}
     </MusicContext.Provider>
   );
