@@ -12,6 +12,7 @@ interface MusicContextData {
   musicStatus: boolean;
   musics: MusicProps[];
   musicDuration: any;
+  loading: boolean;
 }
 
 interface MusicProps {
@@ -50,6 +51,8 @@ const MusicProvider: React.FC = ({ children }) => {
   const [sound, setSound] = useState(new Audio.Sound());
   const [musicStatus, setMusicStatus] = useState(false);
   const [musicDuration, setMusicDuration] = useState<number>();
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     const loadMediaLibrary = async () => {
       const { status } = await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
@@ -58,7 +61,6 @@ const MusicProvider: React.FC = ({ children }) => {
         console.log('Library not granted');
         return;
       }
-
       const musics = await AsyncStorage.getItem('@RNMusicPlayer');
 
       if (musics) {
@@ -71,7 +73,8 @@ const MusicProvider: React.FC = ({ children }) => {
         first: 10000
       }).then((response: any) => {
        return response.assets.filter((music: any) => !music.filename.startsWith('AUD-'))
-      })
+      });
+
       await setMusics(response);
       await AsyncStorage.setItem('@RNMusicPlayer', JSON.stringify(response));
     }
@@ -101,6 +104,7 @@ const MusicProvider: React.FC = ({ children }) => {
   }, [sound]);
 
   const handleFindMusic = useCallback(async () => {
+    setLoading(true);
     const response = await MediaLibrary.getAssetsAsync({
       mediaType: 'audio',
       first: 10000
@@ -109,7 +113,8 @@ const MusicProvider: React.FC = ({ children }) => {
     })
     await setMusics(response);
     await AsyncStorage.setItem('@RNMusicPlayer', JSON.stringify(response));
-    console.log('Gravando')
+    setLoading(false);
+
   }, [])
 
   const handleSetMusic = useCallback(async (music) => {
@@ -141,10 +146,10 @@ const MusicProvider: React.FC = ({ children }) => {
   const handleStopMusic = useCallback(async () => {
     musicStatus ? await sound.pauseAsync() :  await sound.playAsync()
     setMusicStatus(prevState => !prevState);
-  }, [musicStatus]); 
+  }, [musicStatus]);
 
   return (
-    <MusicContext.Provider value={{ 
+    <MusicContext.Provider value={{
       handleSetMusic,
       music,
       handleStopMusic,
@@ -152,6 +157,7 @@ const MusicProvider: React.FC = ({ children }) => {
       musics,
       handleFindMusic,
       musicDuration,
+      loading
     }}>
       {children}
     </MusicContext.Provider>

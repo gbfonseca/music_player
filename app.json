@@ -9,8 +9,7 @@
       "**/*"
     ],
     "splash": {
-      "image": "./android/app/src/main/res/drawable-xxxhdpi/icon.png",
-      "backgroundColor": "#000000"
+      "backgroundColor": "#000"
     }
   }
 }

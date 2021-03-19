@@ -1,45 +1,40 @@
-import React from 'react'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Icon from 'react-native-vector-icons/FontAwesome'
-import Home from '../pages/Home';
-import Music from '../pages/Musics';
-import { View } from 'react-native';
-import Stacks from './stacks';
+import 'react-native-gesture-handler';
+import React from 'react';
+import AppLoading from 'expo-app-loading'
+import { View } from 'react-native'
+import AppRoutes from './app.routes';
+import { useFonts, Poppins_400Regular, Poppins_600SemiBold, Poppins_700Bold } from '@expo-google-fonts/poppins';
+import LottieView from 'lottie-react-native';
+import { SplashAnimation } from '../assets/animations';
 
-const App = createBottomTabNavigator();
 
-const Routes: React.FC = () => {
-  return (
-    <>
-      <App.Navigator
-      initialRouteName="Home"
-      tabBarOptions={{
-      activeTintColor: '#44C68F',
-      inactiveTintColor:'#FFF',
-      tabStyle: {
-        backgroundColor: '#212121'
-      }
+export const App: React.FC = () => {
+
+  // const [dataLoaded, setDataLoaded] = useState(false);
+
+  let [fontsLoaded] = useFonts({
+    Poppins_400Regular,
+    Poppins_600SemiBold,
+    Poppins_700Bold
+  });
+
+  if(!fontsLoaded) {
+    return (
+      <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#000',
       }}
     >
-      <App.Screen name="Home" component={Home} options={{
-        title: '',
-        tabBarIcon: ({color}) => (
-          <Icon name="music" size={24} color={color} style={{ marginTop: 10 }} />
-        )
-      }} />
-      <App.Screen name="Music" component={Music} options={{
-        title: '',
-        tabBarIcon: ({color}) => (
-          <Icon name="star" size={24} color={color} style={{ marginTop: 10 }} />
-        )
-      }} />
-      <App.Screen name="Playing" component={Stacks} options={{
-        tabBarVisible: false,
-        tabBarButton: () => null
-      }} />
-    </App.Navigator>
-    </>
-  );
+        <LottieView source={SplashAnimation} autoPlay loop />
+    </View>
+    )
+  }
+
+  return <AppRoutes />;
+
 }
 
-export default Routes;
+export default App;

@@ -6,7 +6,10 @@ import IconEntypo from 'react-native-vector-icons/Entypo';
 import { useMusic } from '../../hooks/music';
 import { Container, Header, Title, Button, ButtonText, RecentlyPlayed, SubTitle, MusicRecently, MostPlayed, MusicMostPlay, Gender, GenderItem, GenderText, Play, ImageMusic } from './styles';
 import { PlayingMusic } from '../../components';
-import { PlayIcon, MusicPlaceholder } from '../../assets/icons'
+import { PlayIcon, MusicPlaceholder } from '../../assets/icons';
+import LottieView from 'lottie-react-native';
+import { SplashAnimation } from '../../assets/animations';
+
 interface Music {
   name: string;
   artist: string;
@@ -50,11 +53,26 @@ const Home: React.FC = () => {
 
   const [selectMusic, setSelectMusic] = useState<Music>({} as Music);
 
-  const { handleSetMusic, musics, handleFindMusic } = useMusic();
+  const { handleSetMusic, musics, handleFindMusic, loading } = useMusic();
 
   const handleSelectMusic = useCallback((music) => {
     handleSetMusic(music);
   }, []);
+
+  if(loading) {
+    return (
+      <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#000',
+      }}
+    >
+        <LottieView source={SplashAnimation} autoPlay loop />
+    </View>
+    )
+  }
 
   return (
     <Container>
