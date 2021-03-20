@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, TouchableOpacity, FlatList, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/Feather';
@@ -58,6 +58,7 @@ const Home: React.FC = () => {
   const handleSelectMusic = useCallback((music) => {
     handleSetMusic(music);
   }, []);
+
 
   if(loading) {
     return (

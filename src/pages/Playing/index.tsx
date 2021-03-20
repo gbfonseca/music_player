@@ -15,7 +15,22 @@ const Playing: React.FC = () => {
   const [currentTime, setCurrentTime] = useState(0);
   const navigation = useNavigation();
 
-  const { music, handleStopMusic, musicStatus, musicDuration } = useMusic();
+  const { music, handleStopMusic, musicStatus, musicDuration, sound } = useMusic();
+
+  useEffect(() => {
+    setInterval(() => {
+      sound.getStatusAsync().then((response: any) => {
+        setCurrentTime(response.positionMillis);
+      })
+    }, 1000)
+  }, []);
+
+  const handleChangePositionMillis = useCallback((value) => {
+    // setMusicOptions(prevState => ({
+    //   ...prevState,
+    //   positionMillis: value
+    // }))
+  }, [])
 
   return (
     <Container>
@@ -42,9 +57,13 @@ const Playing: React.FC = () => {
               maximumTrackTintColor="#FFF"
               thumbTintColor="#FFF"
               thumbImage={Ellipse}
+              minimumValue={0}
+              maximumValue={musicDuration}
+              value={currentTime}
+              onValueChange={(value) => handleChangePositionMillis(value)}
             />
             <DurationView>
-              <DurationTime>0:00</DurationTime>
+              <DurationTime>{millisToMinutesAndSeconds(currentTime)}</DurationTime>
               <DurationTime>{millisToMinutesAndSeconds(musicDuration)}</DurationTime>
             </DurationView>
           </ViewMusicDuration>

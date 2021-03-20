@@ -5,7 +5,7 @@ import * as Permissions from 'expo-permissions';
 import AsyncStorage from '@react-native-community/async-storage';
 
 interface MusicContextData {
-  handleSetMusic(music: any): void;
+  handleSetMusic(music: any, options?: any): void;
   handleStopMusic(): Promise<void>;
   handleFindMusic(): void;
   music: MusicProps;
@@ -13,6 +13,9 @@ interface MusicContextData {
   musics: MusicProps[];
   musicDuration: any;
   loading: boolean;
+  sound: any;
+  setMusicOptions(musicOptions: any): void;
+  musicOptions: any;
 }
 
 interface MusicProps {
@@ -52,6 +55,12 @@ const MusicProvider: React.FC = ({ children }) => {
   const [musicStatus, setMusicStatus] = useState(false);
   const [musicDuration, setMusicDuration] = useState<number>();
   const [loading, setLoading] = useState(false);
+  const [musicOptions, setMusicOptions] = useState({
+    shouldPlay: musicStatus,
+    isLooping: false,
+    positionMillis: 0,
+    volume: 1.0
+  })
 
   useEffect(() => {
     const loadMediaLibrary = async () => {
@@ -117,7 +126,7 @@ const MusicProvider: React.FC = ({ children }) => {
 
   }, [])
 
-  const handleSetMusic = useCallback(async (music) => {
+  const handleSetMusic = useCallback(async (music, options?) => {
     setMusic(music);
     if(music) {
       if (sound._loaded) {
@@ -127,10 +136,7 @@ const MusicProvider: React.FC = ({ children }) => {
         {
           uri: music.uri
         },
-        {
-          shouldPlay: musicStatus,
-          isLooping: false,
-        },
+        options,
         false
        );
       await sound.stopAsync();
@@ -141,11 +147,12 @@ const MusicProvider: React.FC = ({ children }) => {
         setMusicStatus(response.isPlaying);
       })
     }
-  }, []);
+  }, [musicOptions]);
 
   const handleStopMusic = useCallback(async () => {
     musicStatus ? await sound.pauseAsync() :  await sound.playAsync()
     setMusicStatus(prevState => !prevState);
+
   }, [musicStatus]);
 
   return (
@@ -157,7 +164,10 @@ const MusicProvider: React.FC = ({ children }) => {
       musics,
       handleFindMusic,
       musicDuration,
-      loading
+      loading,
+      sound,
+      setMusicOptions,
+      musicOptions
     }}>
       {children}
     </MusicContext.Provider>
