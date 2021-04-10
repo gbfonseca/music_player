@@ -29,6 +29,7 @@ interface MusicProps {
   modificationTime: number;
   uri: string;
   width: number;
+  coverUrl?: string;
 }
 
 interface SoundProps {
@@ -76,12 +77,29 @@ const MusicProvider: React.FC = ({ children }) => {
         await setMusics(JSON.parse(musics));
         return;
       }
-
       const response = await MediaLibrary.getAssetsAsync({
         mediaType: 'audio',
         first: 10000
       }).then((response: any) => {
-       return response.assets.filter((music: any) => !music.filename.startsWith('AUD-'))
+        return response.assets.filter(async (music: any) => {
+          const musicPath = music.uri.replace(music.filename, '');
+          let coverPath;
+          const coverMusic = await MediaLibrary.getAssetsAsync({
+            mediaType: 'photo',
+            first: 10000,
+            album: music.albumId
+          }). then((responseCover) => {
+            return responseCover.assets.filter((cover) => {
+              return coverPath = cover.uri.replace(cover.filename, '');
+            })
+          });
+          if (coverPath == musicPath) {
+            music.coverUrl = coverMusic[0].uri
+          } else {
+            music.coverUrl = null;
+          }
+          return !music.filename.startsWith('AUD-');
+        })
       });
 
       await setMusics(response);
@@ -106,20 +124,39 @@ const MusicProvider: React.FC = ({ children }) => {
     }
 
     return sound
-      ? () => {
-          sound.unloadAsync();
-        }
-      : setMusicStatus(false);
+    ? () => {
+      sound.unloadAsync();
+    }
+    : setMusicStatus(false);
   }, [sound]);
 
   const handleFindMusic = useCallback(async () => {
     setLoading(true);
+    await AsyncStorage.removeItem('@RNMusicPlayer')
     const response = await MediaLibrary.getAssetsAsync({
       mediaType: 'audio',
       first: 10000
     }).then((response: any) => {
-     return response.assets.filter((music: any) => !music.filename.startsWith('AUD-'))
-    })
+      return response.assets.filter(async (music: any) => {
+        const musicPath = music.uri.replace(music.filename, '');
+        let coverPath;
+        const coverMusic = await MediaLibrary.getAssetsAsync({
+          mediaType: 'photo',
+          first: 10000,
+          album: music.albumId
+        }). then((responseCover) => {
+          return responseCover.assets.filter((cover) => {
+            return coverPath = cover.uri.replace(cover.filename, '');
+          })
+        });
+        if (coverPath == musicPath) {
+          music.coverUrl = coverMusic[0].uri
+        } else {
+          music.coverUrl = null;
+        }
+        return !music.filename.startsWith('AUD-');
+      })
+    });
     await setMusics(response);
     await AsyncStorage.setItem('@RNMusicPlayer', JSON.stringify(response));
     setLoading(false);
@@ -138,40 +175,40 @@ const MusicProvider: React.FC = ({ children }) => {
         },
         options,
         false
-       );
-      await sound.stopAsync();
-      await sound.playAsync();
-      setSound(sound);
-      sound.getStatusAsync().then((response: any) => {
-        setMusicDuration(response.durationMillis as number)
-        setMusicStatus(response.isPlaying);
-      })
-    }
-  }, [musicOptions]);
+        );
+        await sound.stopAsync();
+        await sound.playAsync();
+        setSound(sound);
+        sound.getStatusAsync().then((response: any) => {
+          setMusicDuration(response.durationMillis as number)
+          setMusicStatus(response.isPlaying);
+        })
+      }
+    }, [musicOptions]);
 
-  const handleStopMusic = useCallback(async () => {
-    musicStatus ? await sound.pauseAsync() :  await sound.playAsync()
-    setMusicStatus(prevState => !prevState);
+    const handleStopMusic = useCallback(async () => {
+      musicStatus ? await sound.pauseAsync() :  await sound.playAsync()
+      setMusicStatus(prevState => !prevState);
 
-  }, [musicStatus]);
+    }, [musicStatus]);
 
-  return (
-    <MusicContext.Provider value={{
-      handleSetMusic,
-      music,
-      handleStopMusic,
-      musicStatus,
-      musics,
-      handleFindMusic,
-      musicDuration,
-      loading,
-      sound,
-      setMusicOptions,
-      musicOptions
-    }}>
+    return (
+      <MusicContext.Provider value={{
+        handleSetMusic,
+        music,
+        handleStopMusic,
+        musicStatus,
+        musics,
+        handleFindMusic,
+        musicDuration,
+        loading,
+        sound,
+        setMusicOptions,
+        musicOptions
+      }}>
       {children}
-    </MusicContext.Provider>
-  );
-}
+      </MusicContext.Provider>
+      );
+    }
 
-export { MusicProvider, useMusic };
+    export { MusicProvider, useMusic };

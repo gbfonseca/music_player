@@ -94,12 +94,13 @@ const Home: React.FC = () => {
         <SubTitle>Tocadas Recentemente</SubTitle>
         <FlatList
           horizontal={true}
-          keyExtractor={music => music.id.toString()}
+          initialNumToRender={2}
+          keyExtractor={music => String(music?.id)}
           data={musics}
           renderItem={({item: music}) => (
             <TouchableOpacity style={{  marginRight: 20}} onPress={() => handleSelectMusic(music)}>
               <MusicRecently>
-                <ImageMusic source={MusicPlaceholder} />
+                <ImageMusic source={music.coverUrl ? {uri: music.coverUrl} : MusicPlaceholder} />
                 <Play source={PlayIcon} />
               </MusicRecently>
             </TouchableOpacity>
@@ -110,12 +111,12 @@ const Home: React.FC = () => {
         <SubTitle>As mais tocadas</SubTitle>
         <FlatList
           horizontal={true}
-          keyExtractor={music => music.id.toString()}
+          keyExtractor={music => String(music?.id)}
           data={musics}
           renderItem={({item: music}) => (
             <TouchableOpacity style={{ marginRight: 20}} onPress={() => handleSelectMusic(music)}>
               <MusicMostPlay>
-                <ImageMusic source={MusicPlaceholder} />
+                <ImageMusic source={music.coverUrl ? {uri: music.coverUrl} : MusicPlaceholder} />
                 <Play source={PlayIcon} />
               </MusicMostPlay>
             </TouchableOpacity>

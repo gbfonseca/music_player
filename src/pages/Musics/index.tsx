@@ -19,16 +19,21 @@ const Musics: React.FC = () => {
       <Header>
         <Title>Minhas músicas</Title>
       </Header>
-      <MusicsList>
-        {musics.map(music => (
-          <Music key={music.id} onPress={() => handleSelectMusic(music)}>
-            <MusicCover source={MusicPlaceholder} />
+      <MusicsList
+        data={musics}
+        keyExtractor={(item: any) => String(item.id)}
+        renderItem={({ item }) => {
+          const music: any = item;
+          return (
+            <Music key={music.id} onPress={() => handleSelectMusic(music)}>
+            <MusicCover source={music.coverUrl ? {uri: music.coverUrl} : MusicPlaceholder} />
             <View style={{ marginLeft: 10}}>
               <MusicName>{music.filename}</MusicName>
             </View>
           </Music>
-        ))}
-      </MusicsList>
+          )
+        }}
+      />
       <PlayingMusic />
     </Container>
   )

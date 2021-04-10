@@ -48,7 +48,7 @@ const Playing: React.FC = () => {
               <IconFeather name="list" size={30} color="#FFF" />
             </TouchableOpacity>
           </Header>
-          <Image source={MusicPlaceholder} />
+          <Image source={music.coverUrl ? {uri: music.coverUrl} : MusicPlaceholder} />
           <Title>{music.filename.substring(0, 40)}</Title>
           <SubTitle>Autor desconhecido</SubTitle>
           <ViewMusicDuration>

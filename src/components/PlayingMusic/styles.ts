@@ -14,6 +14,7 @@ export const MusicName = styled.Text`
   padding-top: 3px;
   font-size: 12px;
   margin-bottom: -5px;
+  max-width: 95%;
 `;
 
 export const MusicInfo = styled.Text`

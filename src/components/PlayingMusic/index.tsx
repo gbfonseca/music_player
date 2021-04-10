@@ -43,7 +43,7 @@ const PlayingMusic: React.FC = () => {
             </TouchableOpacity>
             <View style={{ marginLeft: 21 }}>
               <MusicName>{music.filename.substring(0, 65)}</MusicName>
-              <MusicInfo>Anyone</MusicInfo>
+              {/* <MusicInfo>Anyone</MusicInfo> */}
             </View>
           </ActualMusic>
           <TouchableOpacity style={{ marginRight: 20, flex: 1}}>

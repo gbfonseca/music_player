@@ -1,3 +1,4 @@
+import { FlatList } from 'react-native-gesture-handler';
 import styled from 'styled-components/native';
 
 export const Container = styled.SafeAreaView`
@@ -19,7 +20,7 @@ export const Title = styled.Text`
   height: 45px;
 `;
 
-export const MusicsList = styled.ScrollView`
+export const MusicsList = styled(FlatList)`
   flex: 1;
   margin-top: 15px;
   padding: 20px 10px;
@@ -28,8 +29,10 @@ export const MusicsList = styled.ScrollView`
 export const Music = styled.TouchableOpacity`
   border-bottom-color: #C4C4C4;
   border-bottom-width: 1px;
-  padding: 15px 0;
+  padding: 0 0 10px;
   flex-direction: row;
+  margin: 10px 0px;
+  align-items: center;
 `;
 
 export const MusicCover = styled.Image`
