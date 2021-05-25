@@ -1,14 +1,33 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { View, TouchableOpacity, FlatList, Image } from 'react-native';
+import React, { useCallback } from 'react';
+import { View, TouchableOpacity, FlatList } from 'react-native';
+
+import { useNavigation } from '@react-navigation/core';
 import { LinearGradient } from 'expo-linear-gradient';
-import Icon from 'react-native-vector-icons/Feather';
-import IconEntypo from 'react-native-vector-icons/Entypo';
-import { useMusic } from '../../hooks/music';
-import { Container, Header, Title, Button, ButtonText, RecentlyPlayed, SubTitle, MusicRecently, MostPlayed, MusicMostPlay, Gender, GenderItem, GenderText, Play, ImageMusic } from './styles';
-import { PlayingMusic } from '../../components';
-import { PlayIcon, MusicPlaceholder } from '../../assets/icons';
 import LottieView from 'lottie-react-native';
+import Icon from 'react-native-vector-icons/Feather';
+
+import {
+  Container,
+  Header,
+  Title,
+  Button,
+  ButtonText,
+  RecentlyPlayed,
+  SubTitle,
+  MusicRecently,
+  MostPlayed,
+  MusicMostPlay,
+  Gender,
+  GenderItem,
+  GenderText,
+  Play,
+  ImageMusic,
+} from './styles';
+
 import { SplashAnimation } from '../../assets/animations';
+import { PlayIcon, MusicPlaceholder } from '../../assets/icons';
+import { PlayingMusic } from '../../components';
+import { useMusic } from '../../hooks/music';
 
 interface Music {
   name: string;
@@ -17,62 +36,60 @@ interface Music {
   path?: string;
 }
 
-
 const genders = [
   {
     id: 1,
-    name: 'Pagode'
+    name: 'Pagode',
   },
   {
     id: 2,
-    name: 'Rock'
+    name: 'Rock',
   },
   {
     id: 3,
-    name: 'Pop'
+    name: 'Pop',
   },
   {
     id: 4,
-    name: 'MPB'
+    name: 'MPB',
   },
   {
     id: 5,
-    name: 'Jazz'
+    name: 'Jazz',
   },
   {
     id: 6,
-    name: 'Funk'
+    name: 'Funk',
   },
   {
     id: 7,
-    name: 'Samba'
+    name: 'Samba',
   },
-]
+];
 
 const Home: React.FC = () => {
-
-  const [selectMusic, setSelectMusic] = useState<Music>({} as Music);
-
   const { handleSetMusic, musics, handleFindMusic, loading } = useMusic();
+  const { navigate } = useNavigation();
+  const handleSelectMusic = useCallback(
+    (music) => {
+      handleSetMusic(music);
+    },
+    [handleSetMusic],
+  );
 
-  const handleSelectMusic = useCallback((music) => {
-    handleSetMusic(music);
-  }, []);
-
-
-  if(loading) {
+  if (loading) {
     return (
       <View
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#000',
-      }}
-    >
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: '#000',
+        }}
+      >
         <LottieView source={SplashAnimation} autoPlay loop />
-    </View>
-    )
+      </View>
+    );
   }
 
   return (
@@ -80,27 +97,53 @@ const Home: React.FC = () => {
       <Header>
         <Title>Músicas</Title>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <LinearGradient colors={['#45739d', '#44c68f']} style={{height: 50, borderRadius: 25, paddingHorizontal: 12, alignItems: 'center', justifyContent: 'center'}} >
-              <Button onPress={handleFindMusic}>
-                <ButtonText>Adicionar pasta</ButtonText>
-              </Button>
-            </LinearGradient>
-            <TouchableOpacity>
-              <Icon name="settings" size={24} color="#FFF" style={{ marginLeft: 15 }} />
-            </TouchableOpacity>
+          <LinearGradient
+            colors={['#45739d', '#44c68f']}
+            style={{
+              height: 50,
+              borderRadius: 25,
+              paddingHorizontal: 12,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Button onPress={handleFindMusic}>
+              <ButtonText>Adicionar pasta</ButtonText>
+            </Button>
+          </LinearGradient>
+          <TouchableOpacity
+            onPress={() => navigate('Playing', { screen: 'Options' })}
+          >
+            <Icon
+              name="settings"
+              size={24}
+              color="#FFF"
+              style={{ marginLeft: 15 }}
+            />
+          </TouchableOpacity>
         </View>
       </Header>
       <RecentlyPlayed>
         <SubTitle>Tocadas Recentemente</SubTitle>
         <FlatList
-          horizontal={true}
+          horizontal
           initialNumToRender={2}
-          keyExtractor={music => String(music?.id)}
+          keyExtractor={(music) => String(music?.id)}
           data={musics}
-          renderItem={({item: music}) => (
-            <TouchableOpacity style={{  marginRight: 20}} onPress={() => handleSelectMusic(music)}>
+          renderItem={({ item: music }) => (
+            <TouchableOpacity
+              style={{ marginRight: 20 }}
+              onPress={() => {
+                handleSelectMusic(music);
+                console.log(music);
+              }}
+            >
               <MusicRecently>
-                <ImageMusic source={music.coverUrl ? {uri: music.coverUrl} : MusicPlaceholder} />
+                <ImageMusic
+                  source={
+                    music.coverUrl ? { uri: music.coverUrl } : MusicPlaceholder
+                  }
+                />
                 <Play source={PlayIcon} />
               </MusicRecently>
             </TouchableOpacity>
@@ -110,13 +153,20 @@ const Home: React.FC = () => {
       <MostPlayed>
         <SubTitle>As mais tocadas</SubTitle>
         <FlatList
-          horizontal={true}
-          keyExtractor={music => String(music?.id)}
+          horizontal
+          keyExtractor={(music) => String(music?.id)}
           data={musics}
-          renderItem={({item: music}) => (
-            <TouchableOpacity style={{ marginRight: 20}} onPress={() => handleSelectMusic(music)}>
+          renderItem={({ item: music }) => (
+            <TouchableOpacity
+              style={{ marginRight: 20 }}
+              onPress={() => handleSelectMusic(music)}
+            >
               <MusicMostPlay>
-                <ImageMusic source={music.coverUrl ? {uri: music.coverUrl} : MusicPlaceholder} />
+                <ImageMusic
+                  source={
+                    music.coverUrl ? { uri: music.coverUrl } : MusicPlaceholder
+                  }
+                />
                 <Play source={PlayIcon} />
               </MusicMostPlay>
             </TouchableOpacity>
@@ -126,11 +176,11 @@ const Home: React.FC = () => {
       <Gender>
         <SubTitle>Gênero</SubTitle>
         <FlatList
-          horizontal={true}
-          keyExtractor={gender => gender.id.toString()}
+          horizontal
+          keyExtractor={(gender) => gender.id.toString()}
           data={genders}
-          renderItem={({item: gender}) => (
-            <TouchableOpacity style={{  marginRight: 20}}>
+          renderItem={({ item: gender }) => (
+            <TouchableOpacity style={{ marginRight: 20 }}>
               <GenderItem>
                 <GenderText>{gender.name}</GenderText>
               </GenderItem>
@@ -141,6 +191,6 @@ const Home: React.FC = () => {
       <PlayingMusic />
     </Container>
   );
-}
+};
 
 export default Home;

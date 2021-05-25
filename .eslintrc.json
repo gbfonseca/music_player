@@ -44,7 +44,11 @@
     "react/jsx-props-no-spreading": "off",
     "react/jsx-curly-newline": "off",
     "react/jsx-filename-extension": [1, { "extensions": [".tsx"] }],
-    "@typescript-eslint/camelcase": "off",
+    "react/jsx-wrap-multilines": "off",
+    "import/no-extraneous-dependencies": "off",
+    "react/require-default-props": "off",
+
+
     // "@typescript-eslint/explicit-function-return-type": [
     //   "error",
     //   {
