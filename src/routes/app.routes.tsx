@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -44,8 +44,8 @@ const Routes: React.FC = () => {
           options={{
             title: '',
             tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons
-                name="music-circle-outline"
+              <Feather
+                name="disc"
                 size={24}
                 color={color}
                 style={{ marginTop: 10 }}

@@ -13,7 +13,7 @@ export const Header = styled.View`
 `;
 
 export const Title = styled.Text`
-  color: #FFF;
+  color: #fff;
   font-size: 36px;
   padding-left: 15px;
   font-family: 'Poppins_600SemiBold';
@@ -24,10 +24,11 @@ export const MusicsList = styled(FlatList)`
   flex: 1;
   margin-top: 15px;
   padding: 20px 10px;
+  margin-bottom: 10px;
 `;
 
 export const Music = styled.TouchableOpacity`
-  border-bottom-color: #C4C4C4;
+  border-bottom-color: #c4c4c4;
   border-bottom-width: 1px;
   padding: 0 0 10px;
   flex-direction: row;
@@ -45,4 +46,6 @@ export const MusicName = styled.Text`
   font-family: 'Poppins_600SemiBold';
   color: #fff;
   letter-spacing: 0.4px;
+  width: 85%;
+  margin-left: 5px;
 `;

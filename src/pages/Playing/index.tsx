@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
+import AsyncStorage from '@react-native-community/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -40,6 +41,8 @@ const Playing: React.FC = () => {
     musicDuration,
     sound,
     setMusicOptions,
+    musicsFavorites,
+    setMusicsFavorites,
   } = useMusic();
 
   useEffect(() => {
@@ -59,6 +62,25 @@ const Playing: React.FC = () => {
       }));
     },
     [setMusicOptions],
+  );
+
+  const handleFavoriteMusic = useCallback(
+    async (selectedMusic) => {
+      let newArr;
+      if (!musicsFavorites.includes(JSON.stringify(selectedMusic))) {
+        newArr = [...musicsFavorites, JSON.stringify(selectedMusic)];
+      } else {
+        newArr = musicsFavorites.filter(
+          (a) => a !== JSON.stringify(selectedMusic),
+        );
+      }
+      setMusicsFavorites(newArr);
+      await AsyncStorage.setItem(
+        '@RNMusicPlayer: favorites',
+        JSON.stringify(newArr),
+      );
+    },
+    [musicsFavorites, setMusicsFavorites],
   );
 
   return (
@@ -81,8 +103,16 @@ const Playing: React.FC = () => {
         </TouchableOpacity>
         <Content>
           <Header>
-            <TouchableOpacity>
-              <Icon name="staro" size={30} color="#FFF" />
+            <TouchableOpacity onPress={() => handleFavoriteMusic(music)}>
+              <Icon
+                name={
+                  musicsFavorites?.includes(JSON.stringify(music))
+                    ? 'star'
+                    : 'staro'
+                }
+                size={30}
+                color="#FFF"
+              />
             </TouchableOpacity>
             <TouchableOpacity>
               <IconFeather name="list" size={30} color="#FFF" />
@@ -91,7 +121,12 @@ const Playing: React.FC = () => {
           <Image
             source={music.coverUrl ? { uri: music.coverUrl } : MusicPlaceholder}
           />
-          <Title>{music.filename.substring(0, 40)}</Title>
+          <Title>
+            {music.filename
+              .replace('.mp3', '')
+              .replace(/^[0-9]*/gm, '')
+              .replace('- ', '')}
+          </Title>
           <SubTitle>Autor desconhecido</SubTitle>
           <ViewMusicDuration>
             <Slider

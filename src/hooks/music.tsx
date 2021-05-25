@@ -29,6 +29,9 @@ interface MusicContextData {
   setMusicOptions(musicOptions: any): void;
   musicOptions: any;
   handleFindCovers(): void;
+  musicsRecents: string[];
+  musicsFavorites: string[];
+  setMusicsFavorites(musicFavorites: string[]): void;
 }
 
 interface MusicProps {
@@ -60,6 +63,8 @@ function useMusic(): MusicContextData {
 const MusicProvider: React.FC = ({ children }) => {
   const [music, setMusic] = useState<MusicProps>({} as MusicProps);
   const [musics, setMusics] = useState<MusicProps[]>([]);
+  const [musicsFavorites, setMusicsFavorites] = useState<string[]>([]);
+  const [musicsRecents, setMusicsRecents] = useState<string[]>([]);
   const [sound, setSound] = useState(new Audio.Sound());
   const [musicStatus, setMusicStatus] = useState(false);
   const [musicDuration, setMusicDuration] = useState<number>();
@@ -80,17 +85,13 @@ const MusicProvider: React.FC = ({ children }) => {
         return;
       }
       const musicsStoraged = await AsyncStorage.getItem('@RNMusicPlayer');
-
+      const favorites = await AsyncStorage.getItem('@RNMusicPlayer: favorites');
       if (musics) {
         await setMusics(JSON.parse(musicsStoraged as string) as MusicProps[]);
       }
-      const response = await MediaLibrary.getAssetsAsync({
-        mediaType: 'audio',
-        first: 10000,
-      });
-
-      await setMusics(response.assets as MusicProps[]);
-      await AsyncStorage.setItem('@RNMusicPlayer', JSON.stringify(response));
+      if (favorites) {
+        await setMusicsFavorites(JSON.parse(favorites as string));
+      }
     };
     loadMediaLibrary();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -119,13 +120,20 @@ const MusicProvider: React.FC = ({ children }) => {
 
   const handleFindMusic = useCallback(async () => {
     setLoading(true);
+    const mapMusics: MusicFile[] = [];
     await AsyncStorage.removeItem('@RNMusicPlayer');
     const response = await MediaLibrary.getAssetsAsync({
       mediaType: 'audio',
       first: 10000,
     });
-    setMusics(response.assets as MusicFile[]);
-    await AsyncStorage.setItem('@RNMusicPlayer', JSON.stringify(response));
+    response.assets.map((musicFilter) => {
+      if (!musicFilter.filename.startsWith('AUD-')) {
+        mapMusics.push(musicFilter as MusicFile);
+      }
+      return musicFilter;
+    });
+    setMusics(mapMusics as MusicFile[]);
+    await AsyncStorage.setItem('@RNMusicPlayer', JSON.stringify(mapMusics));
     setLoading(false);
   }, []);
 
@@ -146,13 +154,19 @@ const MusicProvider: React.FC = ({ children }) => {
         await sound.stopAsync();
         await sound.playAsync();
         setSound(sound);
+        if (musicsRecents.length < 20) {
+          const musicString = JSON.stringify(musicSet);
+          if (!musicsRecents.includes(musicString)) {
+            setMusicsRecents((prevState) => [musicString, ...prevState]);
+          }
+        }
         sound.getStatusAsync().then((response: any) => {
           setMusicDuration(response.durationMillis as number);
           setMusicStatus(response.isPlaying);
         });
       }
     },
-    [sound],
+    [musicsRecents, sound],
   );
 
   const handleStopMusic = useCallback(async () => {
@@ -161,12 +175,16 @@ const MusicProvider: React.FC = ({ children }) => {
   }, [musicStatus, sound]);
 
   const handleFindCovers = useCallback(async () => {
-    musics.map(async (musicMapped) => {
+    const musicMaps: Array<MusicFile> = [];
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const musicFilter of musics) {
       let coverPath;
       let coverFilename;
+      // eslint-disable-next-line no-await-in-loop
       await MediaLibrary.getAssetsAsync({
         first: 10000,
-        album: musicMapped.albumId,
+        album: musicFilter.albumId,
       }).then((responseCover) => {
         return responseCover.assets.filter((cover) => {
           return (
@@ -175,11 +193,14 @@ const MusicProvider: React.FC = ({ children }) => {
           );
         });
       });
-      if (coverPath === musicMapped.uri.replace(musicMapped.filename, '')) {
-        musicMapped.coverUrl = coverPath + coverFilename;
+      if (coverPath === musicFilter.uri.replace(musicFilter.filename, '')) {
+        musicFilter.coverUrl = coverPath + coverFilename;
       }
-      return !musicMapped.filename.startsWith('AUD-');
-    });
+      if (!musicFilter.filename.startsWith('AUD-')) {
+        musicMaps.push(musicFilter);
+      }
+    }
+    await AsyncStorage.setItem('@RNMusicPlayer', JSON.stringify(musicMaps));
   }, [musics]);
 
   return (
@@ -197,6 +218,9 @@ const MusicProvider: React.FC = ({ children }) => {
         setMusicOptions,
         musicOptions,
         handleFindCovers,
+        musicsRecents,
+        musicsFavorites,
+        setMusicsFavorites,
       }}
     >
       {children}

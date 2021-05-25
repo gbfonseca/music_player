@@ -17,11 +17,9 @@ import {
   MusicRecently,
   MostPlayed,
   MusicMostPlay,
-  Gender,
-  GenderItem,
-  GenderText,
   Play,
   ImageMusic,
+  Content,
 } from './styles';
 
 import { SplashAnimation } from '../../assets/animations';
@@ -29,46 +27,52 @@ import { PlayIcon, MusicPlaceholder } from '../../assets/icons';
 import { PlayingMusic } from '../../components';
 import { useMusic } from '../../hooks/music';
 
-interface Music {
-  name: string;
-  artist: string;
-  id: number;
-  path?: string;
-}
+// interface Music {
+//   name: string;
+//   artist: string;
+//   id: number;
+//   path?: string;
+// }
 
-const genders = [
-  {
-    id: 1,
-    name: 'Pagode',
-  },
-  {
-    id: 2,
-    name: 'Rock',
-  },
-  {
-    id: 3,
-    name: 'Pop',
-  },
-  {
-    id: 4,
-    name: 'MPB',
-  },
-  {
-    id: 5,
-    name: 'Jazz',
-  },
-  {
-    id: 6,
-    name: 'Funk',
-  },
-  {
-    id: 7,
-    name: 'Samba',
-  },
-];
+// const genders = [
+//   {
+//     id: 1,
+//     name: 'Pagode',
+//   },
+//   {
+//     id: 2,
+//     name: 'Rock',
+//   },
+//   {
+//     id: 3,
+//     name: 'Pop',
+//   },
+//   {
+//     id: 4,
+//     name: 'MPB',
+//   },
+//   {
+//     id: 5,
+//     name: 'Jazz',
+//   },
+//   {
+//     id: 6,
+//     name: 'Funk',
+//   },
+//   {
+//     id: 7,
+//     name: 'Samba',
+//   },
+// ];
 
 const Home: React.FC = () => {
-  const { handleSetMusic, musics, handleFindMusic, loading } = useMusic();
+  const {
+    handleSetMusic,
+    handleFindMusic,
+    loading,
+    musicsFavorites,
+    musicsRecents,
+  } = useMusic();
   const { navigate } = useNavigation();
   const handleSelectMusic = useCallback(
     (music) => {
@@ -123,71 +127,83 @@ const Home: React.FC = () => {
           </TouchableOpacity>
         </View>
       </Header>
-      <RecentlyPlayed>
-        <SubTitle>Tocadas Recentemente</SubTitle>
-        <FlatList
-          horizontal
-          initialNumToRender={2}
-          keyExtractor={(music) => String(music?.id)}
-          data={musics}
-          renderItem={({ item: music }) => (
-            <TouchableOpacity
-              style={{ marginRight: 20 }}
-              onPress={() => {
-                handleSelectMusic(music);
-                console.log(music);
-              }}
-            >
-              <MusicRecently>
-                <ImageMusic
-                  source={
-                    music.coverUrl ? { uri: music.coverUrl } : MusicPlaceholder
-                  }
-                />
-                <Play source={PlayIcon} />
-              </MusicRecently>
-            </TouchableOpacity>
-          )}
-        />
-      </RecentlyPlayed>
-      <MostPlayed>
-        <SubTitle>As mais tocadas</SubTitle>
-        <FlatList
-          horizontal
-          keyExtractor={(music) => String(music?.id)}
-          data={musics}
-          renderItem={({ item: music }) => (
-            <TouchableOpacity
-              style={{ marginRight: 20 }}
-              onPress={() => handleSelectMusic(music)}
-            >
-              <MusicMostPlay>
-                <ImageMusic
-                  source={
-                    music.coverUrl ? { uri: music.coverUrl } : MusicPlaceholder
-                  }
-                />
-                <Play source={PlayIcon} />
-              </MusicMostPlay>
-            </TouchableOpacity>
-          )}
-        />
-      </MostPlayed>
-      <Gender>
-        <SubTitle>Gênero</SubTitle>
-        <FlatList
-          horizontal
-          keyExtractor={(gender) => gender.id.toString()}
-          data={genders}
-          renderItem={({ item: gender }) => (
-            <TouchableOpacity style={{ marginRight: 20 }}>
-              <GenderItem>
-                <GenderText>{gender.name}</GenderText>
-              </GenderItem>
-            </TouchableOpacity>
-          )}
-        />
-      </Gender>
+      <Content>
+        <RecentlyPlayed>
+          <SubTitle>Tocadas Recentemente</SubTitle>
+          <FlatList
+            horizontal
+            initialNumToRender={2}
+            keyExtractor={(music) => String(music)}
+            data={musicsRecents}
+            renderItem={({ item }) => {
+              const music = JSON.parse(item);
+              return (
+                <TouchableOpacity
+                  style={{ marginRight: 20 }}
+                  onPress={() => {
+                    handleSelectMusic(music);
+                    console.log(music);
+                  }}
+                >
+                  <MusicRecently>
+                    <ImageMusic
+                      source={
+                        music.coverUrl
+                          ? { uri: music.coverUrl }
+                          : MusicPlaceholder
+                      }
+                    />
+                    <Play source={PlayIcon} />
+                  </MusicRecently>
+                </TouchableOpacity>
+              );
+            }}
+          />
+        </RecentlyPlayed>
+        <MostPlayed>
+          <SubTitle>Favoritas</SubTitle>
+          <FlatList
+            horizontal
+            keyExtractor={(music) => music}
+            data={musicsFavorites}
+            renderItem={({ item }) => {
+              const music = JSON.parse(item);
+              return (
+                <TouchableOpacity
+                  style={{ marginRight: 20 }}
+                  onPress={() => handleSelectMusic(music)}
+                >
+                  <MusicMostPlay>
+                    <ImageMusic
+                      source={
+                        music.coverUrl
+                          ? { uri: music.coverUrl }
+                          : MusicPlaceholder
+                      }
+                    />
+                    <Play source={PlayIcon} />
+                  </MusicMostPlay>
+                </TouchableOpacity>
+              );
+            }}
+          />
+        </MostPlayed>
+        {/* <Gender>
+          <SubTitle>Gênero</SubTitle>
+          <FlatList
+            horizontal
+            keyExtractor={(gender) => gender.id.toString()}
+            data={genders}
+            renderItem={({ item: gender }) => (
+              <TouchableOpacity style={{ marginRight: 20 }}>
+                <GenderItem>
+                  <GenderText>{gender.name}</GenderText>
+                </GenderItem>
+              </TouchableOpacity>
+            )}
+          />
+        </Gender> */}
+      </Content>
       <PlayingMusic />
     </Container>
   );

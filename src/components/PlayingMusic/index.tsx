@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -38,7 +38,7 @@ const PlayingMusic: React.FC = () => {
 
   return (
     <TouchableOpacity
-      style={{ position: 'absolute', bottom: 0 }}
+      style={{ width: '100%' }}
       onPress={() =>
         navigation.navigate('Playing', {
           screen: 'Playing',
@@ -64,12 +64,15 @@ const PlayingMusic: React.FC = () => {
               )}
               {musicStatus && <IconFA name="pause" size={24} color="#151515" />}
             </TouchableOpacity>
-            <View style={{ marginLeft: 21 }}>
-              <MusicName>{music.filename.substring(0, 65)}</MusicName>
-              {/* <MusicInfo>Anyone</MusicInfo> */}
-            </View>
+            <MusicName>
+              {music.filename
+                .replace('.mp3', '')
+                .replace(/^[0-9]*/gm, '')
+                .replace('- ', '')}
+            </MusicName>
+            {/* <MusicInfo>Anyone</MusicInfo> */}
           </ActualMusic>
-          <TouchableOpacity style={{ marginRight: 20, flex: 1 }}>
+          <TouchableOpacity style={{ marginRight: 0, flex: 1 }}>
             <Icon name="stepforward" size={24} color="#151515" />
           </TouchableOpacity>
         </LinearGradient>

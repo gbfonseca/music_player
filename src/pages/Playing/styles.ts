@@ -33,7 +33,7 @@ export const Title = styled.Text`
   font-size: 20px;
   line-height: 36px;
   letter-spacing: 0.5px;
-  color: #FFF;
+  color: #fff;
 `;
 
 export const SubTitle = styled.Text`
@@ -43,7 +43,7 @@ export const SubTitle = styled.Text`
   font-size: 16px;
   line-height: 36px;
   letter-spacing: 0.5px;
-  color: #FFF;
+  color: #fff;
 `;
 
 export const Slider = styled.Slider`
@@ -51,7 +51,7 @@ export const Slider = styled.Slider`
 `;
 
 export const ViewMusicDuration = styled.View`
-  width: 95%
+  width: 95%;
 `;
 
 export const DurationView = styled.View`
@@ -67,7 +67,7 @@ export const DurationTime = styled.Text`
   font-size: 12px;
   line-height: 36px;
   letter-spacing: 0.5px;
-  color: #FFF;
+  color: #fff;
 `;
 
 export const Buttons = styled.View`
@@ -78,7 +78,7 @@ export const Buttons = styled.View`
 
 export const Play = styled.TouchableOpacity`
   box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.25);
-  background: #FFF;
+  background: #fff;
   border-radius: 50px;
   width: 75px;
   height: 75px;
@@ -88,7 +88,7 @@ export const Play = styled.TouchableOpacity`
 `;
 
 export const Back = styled.Text`
-  color: #FFF;
+  color: #fff;
   font-family: 'Poppins_400Regular';
   font-size: 16px;
 `;

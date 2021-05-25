@@ -45,9 +45,12 @@ const Musics: React.FC = () => {
                   music.coverUrl ? { uri: music.coverUrl } : MusicPlaceholder
                 }
               />
-              <View style={{ marginLeft: 10 }}>
-                <MusicName>{music.filename}</MusicName>
-              </View>
+              <MusicName>
+                {music.filename
+                  .replace('.mp3', '')
+                  .replace(/^[0-9]*/gm, '')
+                  .replace('- ', '')}
+              </MusicName>
             </Music>
           );
         }}

@@ -5,6 +5,10 @@ export const Container = styled.SafeAreaView`
   height: 100%;
 `;
 
+export const Content = styled.View`
+  flex: 1;
+`;
+
 export const Header = styled.View`
   height: 60px;
   flex-direction: row;
@@ -14,7 +18,7 @@ export const Header = styled.View`
 `;
 
 export const Title = styled.Text`
-  color: #FFF;
+  color: #fff;
   font-size: 36px;
   font-family: 'Poppins_600SemiBold';
   height: 45px;
@@ -29,14 +33,12 @@ export const Button = styled.TouchableOpacity`
 `;
 
 export const ButtonText = styled.Text`
-  color: #F1F1F1;
+  color: #f1f1f1;
   font-family: 'Poppins_400Regular';
-  
 `;
 
-
 export const SubTitle = styled.Text`
-  color: #FFF;
+  color: #fff;
   font-size: 16px;
   font-family: 'Poppins_600SemiBold';
   margin-bottom: 10px;
@@ -61,7 +63,6 @@ export const MusicRecently = styled.View`
 `;
 
 export const MostPlayed = styled.View`
-
   margin-top: 50px;
   padding: 0 12px;
 `;
