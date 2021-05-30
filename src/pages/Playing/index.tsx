@@ -43,6 +43,8 @@ const Playing: React.FC = () => {
     setMusicOptions,
     musicsFavorites,
     setMusicsFavorites,
+    musics,
+    handleNextPrevMusic,
   } = useMusic();
 
   useEffect(() => {
@@ -82,6 +84,20 @@ const Playing: React.FC = () => {
     },
     [musicsFavorites, setMusicsFavorites],
   );
+
+  const handleNextMusic = useCallback(() => {
+    const index = musics.findIndex(
+      (musicFind) => musicFind.filename === music.filename,
+    );
+    handleNextPrevMusic(index + 1);
+  }, [handleNextPrevMusic, music.filename, musics]);
+
+  const handlePrevMusic = useCallback(() => {
+    const index = musics.findIndex(
+      (musicFind) => musicFind.filename === music.filename,
+    );
+    handleNextPrevMusic(index - 1);
+  }, [handleNextPrevMusic, music.filename, musics]);
 
   return (
     <Container>
@@ -152,7 +168,7 @@ const Playing: React.FC = () => {
             <TouchableOpacity>
               <Icon name="retweet" size={24} color="#FFF" />
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handlePrevMusic}>
               <Icon
                 name="stepbackward"
                 size={35}
@@ -166,7 +182,7 @@ const Playing: React.FC = () => {
               )}
               {musicStatus && <Icon name="pause" size={35} color="#45739D" />}
             </Play>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handleNextMusic}>
               <Icon
                 name="stepforward"
                 size={35}

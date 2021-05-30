@@ -32,6 +32,7 @@ interface MusicContextData {
   musicsRecents: string[];
   musicsFavorites: string[];
   setMusicsFavorites(musicFavorites: string[]): void;
+  handleNextPrevMusic(index: number): void;
 }
 
 interface MusicProps {
@@ -203,6 +204,14 @@ const MusicProvider: React.FC = ({ children }) => {
     await AsyncStorage.setItem('@RNMusicPlayer', JSON.stringify(musicMaps));
   }, [musics]);
 
+  const handleNextPrevMusic = useCallback(
+    async (index: number) => {
+      const selectMusic = musics[index];
+      await handleSetMusic(selectMusic);
+    },
+    [handleSetMusic, musics],
+  );
+
   return (
     <MusicContext.Provider
       value={{
@@ -221,6 +230,7 @@ const MusicProvider: React.FC = ({ children }) => {
         musicsRecents,
         musicsFavorites,
         setMusicsFavorites,
+        handleNextPrevMusic,
       }}
     >
       {children}
