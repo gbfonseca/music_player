@@ -1,8 +1,10 @@
 import React from 'react';
 
-import { Feather } from '@expo/vector-icons';
+import { Feather, Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome';
+
+import Albums from '~/pages/Albums';
 
 import Home from '../pages/Home';
 import Music from '../pages/Musics';
@@ -46,6 +48,21 @@ const Routes: React.FC = () => {
             tabBarIcon: ({ color }) => (
               <Feather
                 name="disc"
+                size={24}
+                color={color}
+                style={{ marginTop: 10 }}
+              />
+            ),
+          }}
+        />
+        <App.Screen
+          name="Albums"
+          component={Albums}
+          options={{
+            title: '',
+            tabBarIcon: ({ color }) => (
+              <Ionicons
+                name="albums-outline"
                 size={24}
                 color={color}
                 style={{ marginTop: 10 }}

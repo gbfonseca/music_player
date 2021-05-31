@@ -14,6 +14,7 @@ import { Audio, AVPlaybackStatus } from 'expo-av';
 import * as MediaLibrary from 'expo-media-library';
 import * as Permissions from 'expo-permissions';
 
+import { IAlbum } from '~/models/Album';
 import { MusicFile } from '~/models/MusicFile';
 
 interface MusicContextData {
@@ -33,6 +34,7 @@ interface MusicContextData {
   musicsFavorites: string[];
   setMusicsFavorites(musicFavorites: string[]): void;
   handleNextPrevMusic(index: number): void;
+  albums: IAlbum[];
 }
 
 interface MusicProps {
@@ -64,6 +66,7 @@ function useMusic(): MusicContextData {
 const MusicProvider: React.FC = ({ children }) => {
   const [music, setMusic] = useState<MusicProps>({} as MusicProps);
   const [musics, setMusics] = useState<MusicProps[]>([]);
+  const [albums, setAlbums] = useState<IAlbum[]>([]);
   const [musicsFavorites, setMusicsFavorites] = useState<string[]>([]);
   const [musicsRecents, setMusicsRecents] = useState<string[]>([]);
   const [sound, setSound] = useState(new Audio.Sound());
@@ -87,11 +90,17 @@ const MusicProvider: React.FC = ({ children }) => {
       }
       const musicsStoraged = await AsyncStorage.getItem('@RNMusicPlayer');
       const favorites = await AsyncStorage.getItem('@RNMusicPlayer: favorites');
+      const albumsStoraged = await AsyncStorage.getItem(
+        '@RNMusicPlayer:albums',
+      );
       if (musics) {
         await setMusics(JSON.parse(musicsStoraged as string) as MusicProps[]);
       }
       if (favorites) {
         await setMusicsFavorites(JSON.parse(favorites as string));
+      }
+      if (albumsStoraged) {
+        await setAlbums(JSON.parse(albumsStoraged as string));
       }
     };
     loadMediaLibrary();
@@ -135,6 +144,28 @@ const MusicProvider: React.FC = ({ children }) => {
     });
     setMusics(mapMusics as MusicFile[]);
     await AsyncStorage.setItem('@RNMusicPlayer', JSON.stringify(mapMusics));
+
+    const responseAlbums = await MediaLibrary.getAlbumsAsync({
+      includeSmartAlbums: false,
+    });
+
+    const albumMaps: Array<IAlbum> = [];
+    const filtereds: Array<string> = [];
+    for (let i = 0; i < responseAlbums.length; i += 1) {
+      mapMusics.forEach((mappedMusic) => {
+        if (mappedMusic.albumId === responseAlbums[i].id) {
+          if (!filtereds.includes(responseAlbums[i].id)) {
+            albumMaps.push(responseAlbums[i] as IAlbum);
+            filtereds.push(responseAlbums[i].id);
+          }
+        }
+      });
+    }
+    await AsyncStorage.setItem(
+      '@RNMusicPlayer:albums',
+      JSON.stringify(albumMaps),
+    );
+    setAlbums(albumMaps);
     setLoading(false);
   }, []);
 
@@ -176,6 +207,7 @@ const MusicProvider: React.FC = ({ children }) => {
   }, [musicStatus, sound]);
 
   const handleFindCovers = useCallback(async () => {
+    setLoading(true);
     const musicMaps: Array<MusicFile> = [];
 
     // eslint-disable-next-line no-restricted-syntax
@@ -202,7 +234,29 @@ const MusicProvider: React.FC = ({ children }) => {
       }
     }
     await AsyncStorage.setItem('@RNMusicPlayer', JSON.stringify(musicMaps));
-  }, [musics]);
+    setMusics(musicMaps);
+    const albumMaps: Array<IAlbum> = [];
+    const filtereds: Array<string> = [];
+    // eslint-disable-next-line no-restricted-syntax
+    // for (const almbumFilter of albums) {
+    for (let i = 0; i < albums.length; i += 1) {
+      musicMaps.forEach((musicMapped) => {
+        if (musicMapped.albumId === albums[i].id) {
+          albums[i].cover_url = musicMapped.coverUrl;
+          if (!filtereds.includes(albums[i].id)) {
+            albumMaps.push(albums[i]);
+            filtereds.push(albums[i].id);
+          }
+        }
+      });
+    }
+    await AsyncStorage.setItem(
+      '@RNMusicPlayer:albums',
+      JSON.stringify(albumMaps),
+    );
+    setAlbums(albumMaps);
+    setLoading(false);
+  }, [albums, musics]);
 
   const handleNextPrevMusic = useCallback(
     async (index: number) => {
@@ -231,6 +285,7 @@ const MusicProvider: React.FC = ({ children }) => {
         musicsFavorites,
         setMusicsFavorites,
         handleNextPrevMusic,
+        albums,
       }}
     >
       {children}

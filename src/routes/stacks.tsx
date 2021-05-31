@@ -3,6 +3,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import Options from '~/pages/Options';
+import ViewAlbumMusics from '~/pages/ViewAlbumMusics';
 
 import Playing from '../pages/Playing';
 
@@ -17,6 +18,7 @@ const Stacks: React.FC = () => {
         }}
       >
         <App.Screen name="Playing" component={Playing} />
+        <App.Screen name="ViewAlbumMusics" component={ViewAlbumMusics} />
         <App.Screen name="Options" component={Options} />
       </App.Navigator>
     </>
