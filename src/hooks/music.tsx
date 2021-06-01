@@ -93,6 +93,9 @@ const MusicProvider: React.FC = ({ children }) => {
       const albumsStoraged = await AsyncStorage.getItem(
         '@RNMusicPlayer:albums',
       );
+      const recentsStoraged = await AsyncStorage.getItem(
+        '@RNMusicPlayer:recents',
+      );
       if (musics) {
         await setMusics(JSON.parse(musicsStoraged as string) as MusicProps[]);
       }
@@ -101,6 +104,9 @@ const MusicProvider: React.FC = ({ children }) => {
       }
       if (albumsStoraged) {
         await setAlbums(JSON.parse(albumsStoraged as string));
+      }
+      if (recentsStoraged) {
+        await setMusicsRecents(JSON.parse(recentsStoraged as string));
       }
     };
     loadMediaLibrary();
@@ -190,6 +196,10 @@ const MusicProvider: React.FC = ({ children }) => {
           const musicString = JSON.stringify(musicSet);
           if (!musicsRecents.includes(musicString)) {
             setMusicsRecents((prevState) => [musicString, ...prevState]);
+            await AsyncStorage.setItem(
+              '@RNMusicPlayer:recents',
+              JSON.stringify(musicsRecents),
+            );
           }
         }
         sound.getStatusAsync().then((response: any) => {

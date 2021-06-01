@@ -4,6 +4,7 @@ import { TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/core';
 
 import { MusicPlaceholder } from '~/assets/icons';
+import { PlayingMusic } from '~/components';
 import { useMusic } from '~/hooks/music';
 import { IAlbum } from '~/models/Album';
 
@@ -61,6 +62,7 @@ function Albums(): ReactElement {
           }}
         />
       </Content>
+      <PlayingMusic />
     </Container>
   );
 }

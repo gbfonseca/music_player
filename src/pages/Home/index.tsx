@@ -142,7 +142,6 @@ const Home: React.FC = () => {
                   style={{ marginRight: 20 }}
                   onPress={() => {
                     handleSelectMusic(music);
-                    console.log(music);
                   }}
                 >
                   <MusicRecently>
